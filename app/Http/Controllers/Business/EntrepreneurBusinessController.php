@@ -1,0 +1,50 @@
+<?php
+
+namespace App\Http\Controllers\Business;
+
+use App\Models\Business;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+
+class EntrepreneurBusinessController extends Controller
+{
+    public function update(Request $request, $id)
+    {
+        $user = auth()->user();
+
+        // $usaha = Business::where('id', $id)->where('user_id', $user->id)->firstOrFail();
+
+        $usaha = Business::find($id);
+
+        if (!$usaha) {
+            return response()->json([
+                'message' => 'Data usaha tidak ditemukan.'
+            ], 404);
+        }
+
+        if ($usaha->user_id !== $user->id) {
+            return response()->json([
+                'message' => 'Akses ditolak. Anda tidak berhak mengubah data usaha ini.'
+            ], 403);
+        }
+
+        $validated = $request->validate([
+            'business_name' => 'sometimes|string|max:255',
+            'owner_name' => 'sometimes|string|max:255',
+            'description' => 'nullable|string',
+            'location' => 'nullable|string',
+            'latitude' => 'nullable|string',
+            'longitude' => 'nullable|string',
+            'instagram' => 'nullable|string',
+            'facebook' => 'nullable|string',
+            'tiktok' => 'nullable|string',
+        ]);
+
+        $usaha->update($validated);
+
+        return response()->json([
+            'message' => 'Data usaha berhasil diperbarui',
+            'data' => $usaha
+        ]);
+    }
+}
