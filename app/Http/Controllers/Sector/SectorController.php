@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Validator;
 
 class SectorController extends Controller
 {
-    publ
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
