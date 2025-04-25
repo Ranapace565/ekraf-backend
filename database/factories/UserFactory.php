@@ -29,7 +29,7 @@ class UserFactory extends Factory
             'google_id' => fake()->unique()->uuid(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
-            'role' => fake()->randomElement((['admin', 'pelaku', 'user'])),
+            'role' => fake()->randomElement((['visitor_logged', 'pelaku', 'user'])),
             'remember_token' => Str::random(10),
         ];
     }

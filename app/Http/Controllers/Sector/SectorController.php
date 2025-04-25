@@ -9,7 +9,26 @@ use Illuminate\Support\Facades\Validator;
 
 class SectorController extends Controller
 {
+    public function index(Request $request)
+    {
+        $query = Sector::query();
 
+        // Filter berdasarkan nama sektor
+        // if ($request->has('name')) {
+        //     $query->where('name', $request->name);
+        // }
+
+        // Search berdasarkan nama usaha
+        if ($request->has('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        // Paginasi
+        $perPage = $request->input('per_page', 10);
+        $businesses = $query->orderBy('created_at', 'desc')->paginate($perPage);
+
+        return response()->json($businesses);
+    }
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -62,6 +81,22 @@ class SectorController extends Controller
         return response()->json([
             'message' => 'Sektor berhasil diperbarui.',
             'data'    => $sector
+        ]);
+    }
+    public function destroy($id)
+    {
+        $business = Sector::find($id);
+
+        if (!$business) {
+            return response()->json([
+                'message' => 'Data sektor tidak ditemukan.'
+            ], 404);
+        }
+
+        $business->delete();
+
+        return response()->json([
+            'message' => 'Sektor berhasil dihapus.'
         ]);
     }
 }

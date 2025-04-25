@@ -52,6 +52,41 @@ class AdminBusinessController extends Controller
         return response()->json(['message' => 'Pengajuan ditolak dan dihapus.']);
     }
 
+    public function disable($id)
+    {
+        $usaha = Business::find($id);
+
+        if (!$usaha) {
+            return response()->json([
+                'message' => 'Data usaha tidak ditemukan.'
+            ], 404);
+        }
+
+        $usaha->update(['is_approved' => false]);
+
+        return response()->json([
+            'message' => 'Data usaha berhasil dinonaktifkan',
+            'data' => $usaha
+        ]);
+    }
+    public function activate($id)
+    {
+        $usaha = Business::find($id);
+
+        if (!$usaha) {
+            return response()->json([
+                'message' => 'Data usaha tidak ditemukan.'
+            ], 404);
+        }
+
+        $usaha->update(['is_approved' => true]);
+
+        return response()->json([
+            'message' => 'Data usaha berhasil dinonaktifkan',
+            'data' => $usaha
+        ]);
+    }
+
     public function destroy($id)
     {
         $business = Business::find($id);

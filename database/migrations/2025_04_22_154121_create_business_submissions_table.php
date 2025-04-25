@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('owner_name');
             $table->string('description');
             $table->foreignId('sector_id')->nullable()->constrained()->onDelete('set null');
-            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }
