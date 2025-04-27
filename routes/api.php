@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Article\AdminArticleController;
 use App\Http\Controllers\Event\AdminEventController;
 use App\Http\Controllers\Galery\EntrepreneurBusinessGaleyController;
 use Illuminate\Http\Request;
@@ -28,6 +29,8 @@ Route::get('/business', [BusinessController::class, 'index']);
 Route::get('/business/{id}', [BusinessController::class, 'show']);
 Route::get('/events', [EventController::class, 'index']);
 Route::get('/events/{id}', [EventController::class, 'show']);
+Route::get('/articles', [AdminArticleController::class, 'index']);
+Route::get('/article/{id}', [AdminArticleController::class, 'show']);
 Route::get('/sectors', [SectorController::class, 'index']);
 Route::post('/upload-galery', [EntrepreneurBusinessGaleyController::class, 'uploadProof']);
 
@@ -74,4 +77,8 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::put('/admin/event/{id}/approved', [AdminEventController::class, 'approve']);
     Route::put('/admin/event/{id}/reject', [AdminEventController::class, 'reject']);
     Route::delete('/admin/event/{id}', action: [AdminEventController::class, 'delete']);
+
+    Route::post('/admin/article', [AdminArticleController::class, 'store']);
+    Route::put('/admin/article/{id}', [AdminArticleController::class, 'update']);
+    Route::delete('/admin/article/{id}', [AdminArticleController::class, 'destroy']);
 });

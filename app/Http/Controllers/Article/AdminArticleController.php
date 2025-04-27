@@ -7,12 +7,13 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class AdminArticleController extends Controller
 {
     public function index()
     {
-        $articles = Article::select('title', 'thumbnail', 'content')->get();
+        $articles = Article::all();
 
         $formattedArticles = $articles->map(function ($article) {
             return [
@@ -27,6 +28,29 @@ class AdminArticleController extends Controller
             'articles' => $formattedArticles
         ]);
     }
+
+    public function show($id)
+    {
+        $article = Article::find($id);
+
+        if (!$article) {
+            return response()->json([
+                'message' => 'Article not found.'
+            ], 404);
+        }
+
+        return response()->json([
+            'id' => $article->id,
+            'title' => $article->title,
+            'slug' => $article->slug,
+            'content' => $article->content,
+            'thumbnail_url' => $article->thumbnail ? asset('storage/' . $article->thumbnail) : null,
+            'expires_at' => $article->expires_at,
+            'created_at' => $article->created_at,
+            'updated_at' => $article->updated_at,
+        ]);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -66,43 +90,68 @@ class AdminArticleController extends Controller
         ], 201);
     }
 
-    public function update($id, Request $request)
+    public function update(Request $request, $id)
     {
-        $event = Event::find($id);
+        $article = Article::find($id);
 
-        if (!$event) {
+        if (!$article) {
             return response()->json([
-                'message' => 'Event tidak ditemukan.'
+                'message' => 'Article not found.'
             ], 404);
         }
 
-        if ($event->user_id != Auth::id()) {
-            return response()->json([
-                'message' => 'Anda tidak memiliki hak untuk mengedit event ini.'
-            ], 403);
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'expires_at' => 'nullable|date',
+        ]);
+
+        if ($request->hasFile('thumbnail')) {
+            $titleSlug = Str::slug($request->input('title'));
+            $extension = $request->file('thumbnail')->getClientOriginalExtension();
+            $filename = $titleSlug . '.' . $extension;
+
+            $thumbnailPath = $request->file('thumbnail')->storeAs('article/thumbnails', $filename, 'public');
+            $article->thumbnail = $thumbnailPath;
         }
 
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'event_date' => 'required|date',
-            'location' => 'required|string',
-            'latitude' => 'required|string',
-            'longitude' => 'required|string',
-            'description' => 'required|string', // perbaikan dari 'text' jadi 'string'
-        ]);
+        $article->title = $validated['title'];
+        // $article->slug = Str::slug($validated['title']); // Optional, regenerate slug
+        $article->content = $validated['content'];
+        $article->expires_at = $validated['expires_at'] ?? null;
 
-        $event->update([
-            'title' => $request->title,
-            'event_date' => $request->event_date,
-            'location' => $request->location,
-            'latitude' => $request->latitude,
-            'longitude' => $request->longitude,
-            'description' => $request->description,
-        ]);
+        $article->save();
 
         return response()->json([
-            'message' => 'Event berhasil diperbarui.',
-            'data' => $event,
+            'message' => 'Article updated successfully',
+            'article' => $article
+        ]);
+    }
+    public function destroy($id)
+    {
+        // Cari artikel berdasarkan ID
+        $article = Article::find($id);
+
+        // Jika artikel tidak ditemukan, kembalikan response error
+        if (!$article) {
+            return response()->json([
+                'message' => 'Article not found.'
+            ], 404);
+        }
+
+        // Cek jika artikel memiliki thumbnail dan hapus file thumbnail
+        if ($article->thumbnail) {
+            // Menghapus gambar dari storage
+            Storage::disk('public')->delete($article->thumbnail);
+        }
+
+        // Hapus artikel dari database
+        $article->delete();
+
+        // Kembalikan response sukses
+        return response()->json([
+            'message' => 'Article deleted successfully'
         ], 200);
     }
 }
