@@ -32,7 +32,7 @@ class BusinessFactory extends Factory
             'instagram' => '@' . fake()->userName(),
             'facebook' => fake()->userName(),
             'tiktok' => fake()->userName(),
-            'is_approved' => fake()->boolean(),
+            'status' => fake()->boolean(),
         ];
     }
 }

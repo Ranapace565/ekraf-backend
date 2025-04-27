@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('instagram')->nullable();
             $table->string('facebook')->nullable();
             $table->string('tiktok')->nullable();
-            $table->boolean('is_approved')->default(false);
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }

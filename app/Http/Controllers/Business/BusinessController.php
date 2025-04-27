@@ -21,7 +21,8 @@ class BusinessController extends Controller
 
     public function index(Request $request)
     {
-        $query = Business::query();
+        $query = Business::query()->where('is_approved', true);
+        // tak tambahi where
 
         // Filter berdasarkan sektor_id
         if ($request->has('sektor')) {
@@ -37,6 +38,26 @@ class BusinessController extends Controller
         $perPage = $request->input('per_page', 10);
         $businesses = $query->orderBy('created_at', 'desc')->paginate($perPage);
 
-        return response()->json($businesses);
+        return response()->json([
+            'message' => 'Bisnis ditemukan',
+            'data' => $businesses
+        ]);
+    }
+    public function show($id)
+    {
+        $business = Business::where('id', $id)
+            ->where('is_approved', true)
+            ->first();
+
+        if (!$business) {
+            return response()->json([
+                'message' => 'Bisnis tidak ditemukan atau belum disetujui'
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Bisnis ditemukan',
+            'data' => $business
+        ], 200);
     }
 }

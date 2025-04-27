@@ -44,10 +44,19 @@ class AdminBusinessSubmissionController extends Controller
         return response()->json(['message' => 'Pengajuan disetujui dan dipindahkan ke data usaha.']);
     }
 
-    public function reject($id)
+    // tambah note
+    public function reject(Request $request, $id)
     {
         $submission = BusinessSubmission::findOrFail($id);
-        $submission->update(['status' => 0]);
+
+        $request->validate([
+            'note' => 'required|string|max:255'
+        ]);
+
+        $submission->update([
+            'status' => 0,
+            'note' => $request->note
+        ]);
 
         return response()->json([
             'message' => 'Pengajuan ditolak.',

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Event\AdminEventController;
 use App\Http\Controllers\Galery\EntrepreneurBusinessGaleyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -12,6 +13,8 @@ use App\Http\Controllers\Business\BusinessSubmissionController;
 use App\Http\Controllers\Business\EntrepreneurBusinessController;
 use App\Http\Controllers\Business\AdminBusinessSubmissionController;
 use App\Http\Controllers\BusinessGalleryController;
+use App\Http\Controllers\Event\EnterpreneurEventController;
+use App\Http\Controllers\Event\EventController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -21,38 +24,54 @@ Route::get('/auth/callback/google', [GoogleAuthController::class, 'callback']);
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-
-
+Route::get('/business', [BusinessController::class, 'index']);
+Route::get('/business/{id}', [BusinessController::class, 'show']);
+Route::get('/events', [EventController::class, 'index']);
+Route::get('/events/{id}', [EventController::class, 'show']);
+Route::get('/sectors', [SectorController::class, 'index']);
+Route::post('/upload-galery', [EntrepreneurBusinessGaleyController::class, 'uploadProof']);
 
 Route::middleware(['web'])->group(function () {
     Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect']);
     Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback']);
 });
 
-Route::get('/usaha', [BusinessController::class, 'index']);
-Route::get('/sectors', [SectorController::class, 'index']);
-Route::post('/upload-galery', [EntrepreneurBusinessGaleyController::class, 'uploadProof']);
-
-
 Route::middleware(['auth:sanctum', 'role:visitor_logged'])->group(function () {
-    Route::post('/business-submission', [BusinessSubmissionController::class, 'store']);
-});
-
-Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
-    Route::post('/pengajuan-usaha/{id}/approve', [AdminBusinessSubmissionController::class, 'approve']);
-    Route::post('/pengajuan-usaha/{id}/reject', [AdminBusinessSubmissionController::class, 'reject']);
-    Route::delete('/pengajuan-usaha/{id}', [AdminBusinessSubmissionController::class, 'destroy']);
-    Route::get('/pengajuan-usaha', [AdminBusinessSubmissionController::class, 'index']);
-
-
-    Route::post('/usaha/{id}/disable', [AdminBusinessController::class, 'disable']);
-    Route::post('/usaha/{id}/activate', [AdminBusinessController::class, 'activate']);
-    Route::delete('/usaha/{id}', [AdminBusinessController::class, 'destroy']);
-
-    Route::post('/sectors', [SectorController::class, 'store']);
-    Route::put('/sectors/{id}', [SectorController::class, 'update']);
+    Route::post('/visitor/business-submission', [BusinessSubmissionController::class, 'store']);
 });
 
 Route::middleware(['auth:sanctum', 'role:entrepreneur'])->group(function () {
-    Route::put('/usaha/{id}', [EntrepreneurBusinessController::class, 'update']);
+    Route::get('/entrepreneur/business', [EntrepreneurBusinessController::class, 'show']);
+    Route::put('/entrepreneur/business/update', [EntrepreneurBusinessController::class, 'update']);
+    Route::put('/entrepreneur/business/activate', [EntrepreneurBusinessController::class, 'activate']);
+    Route::put('/entrepreneur/business/disable', [EntrepreneurBusinessController::class, 'disable']);
+
+    Route::get('/entrepreneur/event', [EnterpreneurEventController::class, 'index']);
+    Route::get('/entrepreneur/event/{id}', [EnterpreneurEventController::class, 'show']);
+    Route::post('/entrepreneur/event', [EnterpreneurEventController::class, 'store']);
+    Route::put('/entrepreneur/event/{id}', [EnterpreneurEventController::class, 'update']);
+    Route::delete('/entrepreneur/event/{id}', [EnterpreneurEventController::class, 'destroy']);
+});
+
+
+Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+    Route::get('/admin/business-submission', [AdminBusinessSubmissionController::class, 'index']);
+    Route::put('/admin/business-submission/{id}/approve', [AdminBusinessSubmissionController::class, 'approve']);
+    Route::put('/admin/business-submission/{id}/reject', [AdminBusinessSubmissionController::class, 'reject']);
+    Route::delete('/admin/business-submission/{id}', [AdminBusinessSubmissionController::class, 'destroy']);
+
+    Route::get('/admin/business', [AdminBusinessController::class, 'index']);
+    Route::get('/admin/business/{id}', [AdminBusinessController::class, 'show']);
+    Route::put('/admin/business/{id}/disable', [AdminBusinessController::class, 'disable']);
+    Route::put('/admin/business/{id}/activate', [AdminBusinessController::class, 'activate']);
+    Route::delete('/admin/business/{id}', [AdminBusinessController::class, 'destroy']);
+
+    Route::post('/admin/sectors', [SectorController::class, 'store']);
+    Route::put('/admin/sectors/{id}', [SectorController::class, 'update']);
+
+    Route::get('/admin/event', [AdminEventController::class, 'index']);
+    Route::get('/admin/event/{id}', [AdminEventController::class, 'show']);
+    Route::put('/admin/event/{id}/approved', [AdminEventController::class, 'approve']);
+    Route::put('/admin/event/{id}/reject', [AdminEventController::class, 'reject']);
+    Route::delete('/admin/event/{id}', action: [AdminEventController::class, 'delete']);
 });

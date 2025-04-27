@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('location');
             $table->string('owner_name');
             $table->string('description');
+            $table->string('note')->nullable();
             $table->foreignId('sector_id')->nullable()->constrained()->onDelete('set null');
             $table->boolean('status')->default(true);
             $table->timestamps();

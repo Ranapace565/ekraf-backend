@@ -8,48 +8,55 @@ use App\Models\Business;
 use Illuminate\Http\Request;
 use App\Models\BusinessSubmission;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class AdminBusinessController extends Controller
 {
-    public function approve($id)
+    public function index(Request $request)
     {
-        $submission = BusinessSubmission::findOrFail($id);
 
-        $sector = Sector::where('name', $submission->sektor)->first();
+        $query = Business::query();
+        // tak tambahi where
 
-        if (!$sector) {
-            return response()->json([
-                'message' => 'Sektor dengan nama "' . $submission->sektor . '" tidak ditemukan.'
-            ], 404);
+        // Filter berdasarkan sektor_id
+        if ($request->has('sektor')) {
+            $query->where('sector_id', $request->sektor);
         }
 
-        Business::create([
-            'user_id' => $submission->user_id,
-            'business_name' => $submission->nama_usaha,
-            'proof_photo' => 'profile.jpg',
-            'location' => $submission->alamat,
-            'owner_name' => $submission->nama_owner,
-            'sector_id' => $sector->id,
-            'is_approved' => 1,
+        if ($request->has('is_approved')) {
+            $query->where('is_approved', $request->is_approved);
+        }
+
+        // Search berdasarkan nama usaha
+        if ($request->has('search')) {
+            $query->where('business_name', 'like', '%' . $request->search . '%');
+        }
+
+        // Paginasi
+        $perPage = $request->input('per_page', 10);
+        $businesses = $query->orderBy('created_at', 'desc')->paginate($perPage);
+
+        return response()->json([
+            'message' => 'Bisnis ditemukan',
+            'data' => $businesses
         ]);
-
-        $user = User::find($submission->user_id);
-        if ($user) {
-            $user->role = 'entrepreneur';
-            $user->save();
-        }
-
-        $submission->delete();
-
-        return response()->json(['message' => 'Pengajuan disetujui dan dipindahkan ke data usaha.']);
     }
 
-    public function reject($id)
+    public function show($id)
     {
-        $submission = BusinessSubmission::findOrFail($id);
-        $submission->delete();
 
-        return response()->json(['message' => 'Pengajuan ditolak dan dihapus.']);
+        $business = Business::where('id', $id)->get();
+
+        if (!$business) {
+            return response()->json([
+                'message' => 'Usaha tidak ditemukan'
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Usaha ditemukan',
+            'data' => $business,
+        ], 201);
     }
 
     public function disable($id)
