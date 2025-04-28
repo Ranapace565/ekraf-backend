@@ -6,6 +6,7 @@ use App\Models\Sector;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -56,6 +57,13 @@ class SectorController extends Controller
 
     public function store(Request $request)
     {
+        $user = Auth::user();
+        if ($user->role !== 'admin') {
+            return response()->json([
+                'message' => 'Unauthorized. Only admin can create sector.'
+            ], 403);
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:sectors,name',
             'description' => 'nullable|string',
@@ -89,6 +97,13 @@ class SectorController extends Controller
     }
     public function update(Request $request, $id)
     {
+        $user = Auth::user();
+        if ($user->role !== 'admin') {
+            return response()->json([
+                'message' => 'Unauthorized. Only admin can create sector.'
+            ], 403);
+        }
+
         $sector = Sector::find($id);
 
         if (!$sector) {
@@ -136,6 +151,13 @@ class SectorController extends Controller
 
     public function destroy($id)
     {
+        $user = Auth::user();
+        if ($user->role !== 'admin') {
+            return response()->json([
+                'message' => 'Unauthorized. Only admin can create sector.'
+            ], 403);
+        }
+
         $sector = Sector::find($id);
 
         if (!$sector) {

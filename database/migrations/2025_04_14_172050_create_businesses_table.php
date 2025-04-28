@@ -23,9 +23,9 @@ return new class extends Migration
             $table->string('location')->nullable();
             $table->string('latitude')->nullable();
             $table->string('longitude')->nullable();
-            $table->string('instagram')->nullable();
-            $table->string('facebook')->nullable();
-            $table->string('tiktok')->nullable();
+            // $table->string('instagram')->nullable();
+            // $table->string('facebook')->nullable();
+            // $table->string('tiktok')->nullable();
             $table->integer('status')->default(1);
             $table->boolean('active')->nullable()->default(true);
             $table->string('note')->nullable();

@@ -16,6 +16,8 @@ use App\Http\Controllers\Business\AdminBusinessSubmissionController;
 use App\Http\Controllers\BusinessGalleryController;
 use App\Http\Controllers\Event\EnterpreneurEventController;
 use App\Http\Controllers\Event\EventController;
+use App\Http\Controllers\SosialMedia\EntrepreneurSosialMediaController;
+use App\Http\Controllers\SosialMedia\SosialMediaController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -35,7 +37,8 @@ Route::get('/articles', [AdminArticleController::class, 'index']);
 Route::get('/article/{id}', [AdminArticleController::class, 'show']);
 Route::get('/sectors', [SectorController::class, 'index']);
 Route::get('/sectors/{id}', [SectorController::class, 'show']);
-Route::post('/upload-galery', [EntrepreneurBusinessGaleyController::class, 'uploadProof']);
+Route::get('/sosial-medias/{id}', [SosialMediaController::class, 'index']);
+Route::get('/galery/{id}', [EntrepreneurBusinessGaleyController::class, 'index']);
 
 Route::middleware(['web'])->group(function () {
     Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect']);
@@ -62,6 +65,15 @@ Route::middleware(['auth:sanctum', 'role:entrepreneur'])->group(function () {
     Route::post('/entrepreneur/event', [EnterpreneurEventController::class, 'store']);
     Route::put('/entrepreneur/event/{id}', [EnterpreneurEventController::class, 'update']);
     Route::delete('/entrepreneur/event/{id}', [EnterpreneurEventController::class, 'destroy']);
+
+    Route::get('/entrepreneur/sosial-media', [EntrepreneurSosialMediaController::class, 'index']);
+    Route::post('/entrepreneur/sosial-media/{id}', [EntrepreneurSosialMediaController::class, 'store']);
+    Route::put('/entrepreneur/sosial-media/{id}', [EntrepreneurSosialMediaController::class, 'update']);
+    Route::delete('/entrepreneur/sosial-media/{id}', [EntrepreneurSosialMediaController::class, 'destroy']);
+
+    Route::post('/entrepreneur/galery', [EntrepreneurBusinessGaleyController::class, 'store']);
+    Route::put('/entrepreneur/galery/{id}', [EntrepreneurBusinessGaleyController::class, 'store']);
+    Route::delete('/entrepreneur/galery/{id}', [EntrepreneurBusinessGaleyController::class, 'delete']);
 });
 
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {

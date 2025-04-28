@@ -44,6 +44,11 @@ class User extends Authenticatable
         return $this->hasMany(Event::class);
     }
 
+    public function SosialMedia()
+    {
+        return $this->hasMany(SosialMedia::class);
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

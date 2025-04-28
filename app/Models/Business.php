@@ -82,6 +82,11 @@ class Business extends Model
         return $this->hasMany(Event::class);
     }
 
+    public function SosialMedia()
+    {
+        return $this->hasMany(SosialMedia::class);
+    }
+
     public function products()
     {
         return $this->hasMany(Product::class);

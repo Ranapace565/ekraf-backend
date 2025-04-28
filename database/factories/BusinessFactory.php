@@ -24,14 +24,14 @@ class BusinessFactory extends Factory
             'business_name' => $name,
             'slug' => Str::slug($name) . '-' . Str::random(5),
             'owner_name' => fake()->name(),
-            'proof_photo' => 'proof.jpg',
+            'profile' => 'proof.jpg',
             'description' => fake()->paragraph(),
             'location' => fake()->address(),
             'latitude' => fake()->latitude(),
             'longitude' => fake()->longitude(),
-            'instagram' => '@' . fake()->userName(),
-            'facebook' => fake()->userName(),
-            'tiktok' => fake()->userName(),
+            // 'instagram' => '@' . fake()->userName(),
+            // 'facebook' => fake()->userName(),
+            // 'tiktok' => fake()->userName(),
             'status' => fake()->boolean(),
         ];
     }
