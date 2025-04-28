@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 class EntrepreneurSosialMediaController extends Controller
 {
 
-    public function indexByUser()
+    public function index()
     {
         $userId = Auth::id();
 

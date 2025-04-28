@@ -17,6 +17,8 @@ use App\Http\Controllers\Business\AdminBusinessSubmissionController;
 use App\Http\Controllers\BusinessGalleryController;
 use App\Http\Controllers\Event\EnterpreneurEventController;
 use App\Http\Controllers\Event\EventController;
+use App\Http\Controllers\Product\EntrepreneurProductController;
+use App\Http\Controllers\Product\ProductController;
 use App\Http\Controllers\Service\AdminServicesController;
 use App\Http\Controllers\SosialMedia\EntrepreneurSosialMediaController;
 use App\Http\Controllers\SosialMedia\SosialMediaController;
@@ -39,10 +41,12 @@ Route::get('/articles', [AdminArticleController::class, 'index']);
 Route::get('/article/{id}', [AdminArticleController::class, 'show']);
 Route::get('/sectors', [SectorController::class, 'index']);
 Route::get('/sectors/{id}', [SectorController::class, 'show']);
-Route::get('/sosial-medias/{id}', [SosialMediaController::class, 'index']);
 Route::get('/galery/{id}', [EntrepreneurBusinessGaleyController::class, 'index']);
 Route::get('/service', [AdminServicesController::class, 'index']);
 Route::get('/comment/{id}', [CommentController::class, 'index']);
+Route::get('/sosial-media', [SosialMediaController::class, 'index']);
+Route::get('/business-product/{id}', [ProductController::class, 'index']);
+Route::get('/product/{id}', [ProductController::class, 'show']);
 
 Route::middleware(['web'])->group(function () {
     Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect']);
@@ -75,10 +79,10 @@ Route::middleware(['auth:sanctum', 'role:entrepreneur'])->group(function () {
     Route::put('/entrepreneur/event/{id}', [EnterpreneurEventController::class, 'update']);
     Route::delete('/entrepreneur/event/{id}', [EnterpreneurEventController::class, 'destroy']);
 
-    Route::get('/entrepreneur/sosial-media', [EntrepreneurSosialMediaController::class, 'index']);
-    Route::post('/entrepreneur/sosial-media/{id}', [EntrepreneurSosialMediaController::class, 'store']);
-    Route::put('/entrepreneur/sosial-media/{id}', [EntrepreneurSosialMediaController::class, 'update']);
-    Route::delete('/entrepreneur/sosial-media/{id}', [EntrepreneurSosialMediaController::class, 'destroy']);
+    Route::get('/entrepreneur/sosial-media', [SosialMediaController::class, 'indexByuser']);
+    Route::post('/entrepreneur/sosial-media/{id}', [SosialMediaController::class, 'store']);
+    Route::put('/entrepreneur/sosial-media/{id}', [SosialMediaController::class, 'update']);
+    Route::delete('/entrepreneur/sosial-media/{id}', [SosialMediaController::class, 'destroy']);
 
     Route::post('/entrepreneur/galery', [EntrepreneurBusinessGaleyController::class, 'store']);
     Route::put('/entrepreneur/galery/{id}', [EntrepreneurBusinessGaleyController::class, 'store']);
@@ -88,6 +92,12 @@ Route::middleware(['auth:sanctum', 'role:entrepreneur'])->group(function () {
     Route::post('/entrepreneur/comment', [CommentController::class, 'store']);
     Route::put('/entrepreneur/comment/{id}', [CommentController::class, 'update']);
     Route::delete('/entrepreneur/comment/{id}', [CommentController::class, 'destroy']);
+
+    Route::get('/entrepreneur/product/', [EntrepreneurProductController::class, 'index']);
+    Route::get('/entrepreneur/product/{id}', [EntrepreneurProductController::class, 'show']);
+    Route::post('/entrepreneur/product/', [EntrepreneurProductController::class, 'store']);
+    Route::put('/entrepreneur/product/{id}', [EntrepreneurProductController::class, 'update']);
+    Route::delete('/entrepreneur/product/{id}', [EntrepreneurProductController::class, 'destroy']);
 });
 
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
@@ -119,4 +129,9 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
 
     Route::Post('/admin/service', [AdminServicesController::class, 'store']);
     Route::put('/admin/service', [AdminServicesController::class, 'update']);
+
+    Route::get('/admin/sosial-media', [SosialMediaController::class, 'indexByuser']);
+    Route::post('/admin/sosial-media/{id}', [SosialMediaController::class, 'store']);
+    Route::put('/admin/sosial-media/{id}', [SosialMediaController::class, 'update']);
+    Route::delete('/admin/sosial-media/{id}', [SosialMediaController::class, 'destroy']);
 });

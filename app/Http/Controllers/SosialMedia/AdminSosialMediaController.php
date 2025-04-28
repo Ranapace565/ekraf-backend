@@ -2,32 +2,58 @@
 
 namespace App\Http\Controllers\SosialMedia;
 
+use App\Models\User;
 use App\Models\Business;
 use App\Models\SosialMedia;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
-class SosialMediaController extends Controller
+class AdminSosialMediaController extends Controller
 {
-    public function index($businessId)
-    {
 
-        $sosialMedias = SosialMedia::where('business_id', $businessId)->get();
+    // public function index()
+    // {
+    //     // Ambil id user yang sedang login
+    //     $userId = Auth::id();
 
-        if ($sosialMedias->isEmpty()) {
-            return response()->json([
-                'message' => 'Belum ada sosial media untuk bisnis ini.'
-            ], 404);
-        }
+    //     // Ambil data user yang sedang login
+    //     $user = Auth::user();
 
-        return response()->json([
-            'message' => 'Daftar sosial media berdasarkan bisnis.',
-            'data' => $sosialMedias,
-        ], 200);
-    }
+    //     if ($user->role === 'admin') {
+    //         // Tampilkan semua sosial media yang dibuat oleh user dengan role admin
+    //         $sosialMedias = SosialMedia::whereHas('user', function ($query) {
+    //             $query->where('role', 'admin');
+    //         })->get();
 
-    public function indexByuser()
+    //         if ($sosialMedias->isEmpty()) {
+    //             return response()->json([
+    //                 'message' => 'Belum ada sosial media untuk admin.'
+    //             ], 404);
+    //         }
+
+    //         return response()->json([
+    //             'message' => 'Daftar sosial media milik admin.',
+    //             'data' => $sosialMedias,
+    //         ], 200);
+    //     }
+
+    //     $sosialMedias = SosialMedia::where('user_id', $userId)->get();
+
+    //     if ($sosialMedias->isEmpty()) {
+    //         return response()->json([
+    //             'message' => 'Belum ada sosial media untuk dinas ini.'
+    //         ], 404);
+    //     }
+
+    //     return response()->json([
+    //         'message' => 'Daftar sosial media berdasarkan user.',
+    //         'data' => $sosialMedias,
+    //     ], 200);
+    // }
+
+
+    public function index()
     {
         // Ambil user yang sedang login
         $user = Auth::user();
@@ -65,6 +91,67 @@ class SosialMediaController extends Controller
             'data' => $sosialMedias,
         ], 200);
     }
+
+    // public function store(Request $request)
+    // {
+    //     $validated = $request->validate([
+    //         'caption' => 'required|string|max:255',
+    //         'uri' => 'required|url|max:255',
+    //         'type' => 'required|string|max:50',
+    //     ]);
+
+    //     $userId = Auth::id();
+
+    //     $sosialMedia = new SosialMedia();
+    //     $sosialMedia->user_id = $userId;
+    //     $sosialMedia->caption = $validated['caption'];
+    //     $sosialMedia->uri = $validated['uri'];
+    //     $sosialMedia->type = $validated['type'];
+    //     $sosialMedia->save();
+
+    //     return response()->json([
+    //         'message' => 'Sosial media berhasil ditambahkan.',
+    //         'data' => $sosialMedia,
+    //     ], 201);
+    // }
+
+    // public function update(Request $request, $id)
+    // {
+
+    //     $sosialMedia = SosialMedia::find($id);
+
+    //     if (!$sosialMedia) {
+    //         return response()->json([
+    //             'message' => 'Sosial media tidak ditemukan.'
+    //         ], 404);
+    //     }
+
+    //     $sosialRole = User::where($id, $sosialMedia->user_id);
+
+    //     if ($sosialRole->role !== 'admin') {
+    //         return response()->json([
+    //             'message' => 'Sosial media ini bukan milik admin.'
+    //         ], 403);
+    //     }
+
+    //     $validated = $request->validate([
+    //         'caption' => 'required|string|max:255',
+    //         'uri' => 'required|url|max:255',
+    //         'type' => 'required|string|max:50',
+    //     ]);
+
+    //     $sosialMedia->caption = $validated['caption'];
+    //     $sosialMedia->uri = $validated['uri'];
+    //     $sosialMedia->type = $validated['type'];
+
+    //     $sosialMedia->save();
+
+    //     return response()->json([
+    //         'message' => 'Sosial media berhasil diperbarui.',
+    //         'data' => $sosialMedia
+    //     ], 200);
+    // }
+
 
     public function store(Request $request)
     {
@@ -158,6 +245,33 @@ class SosialMediaController extends Controller
             'data' => $sosialMedia
         ], 200);
     }
+
+
+    // public function destroy($id)
+    // {
+    //     $sosialMedia = SosialMedia::find($id);
+
+    //     if (!$sosialMedia) {
+    //         return response()->json([
+    //             'message' => 'Sosial media tidak ditemukan.'
+    //         ], 404);
+    //     }
+
+    //     $sosialRole = User::where($id, $sosialMedia->user_id);
+
+    //     if ($sosialRole->role !== 'admin') {
+    //         return response()->json([
+    //             'message' => 'Sosial media ini bukan milik admin.'
+    //         ], 403);
+    //     }
+
+    //     // Hapus sosial media
+    //     $sosialMedia->delete();
+
+    //     return response()->json([
+    //         'message' => 'Sosial media berhasil dihapus.'
+    //     ], 200);
+    // }
 
     public function destroy($id)
     {
