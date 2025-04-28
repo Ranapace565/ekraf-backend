@@ -108,6 +108,13 @@ class AdminArticleController extends Controller
         ]);
 
         if ($request->hasFile('thumbnail')) {
+            if ($article->thumbnail) {
+                $oldThumbnailPath = storage_path('app/public/' . $article->thumbnail);
+                if (file_exists($oldThumbnailPath)) {
+                    unlink($oldThumbnailPath);  // Hapus file thumbnail lama
+                }
+            }
+
             $titleSlug = Str::slug($request->input('title'));
             $extension = $request->file('thumbnail')->getClientOriginalExtension();
             $filename = $titleSlug . '.' . $extension;
@@ -130,26 +137,20 @@ class AdminArticleController extends Controller
     }
     public function destroy($id)
     {
-        // Cari artikel berdasarkan ID
         $article = Article::find($id);
 
-        // Jika artikel tidak ditemukan, kembalikan response error
         if (!$article) {
             return response()->json([
                 'message' => 'Article not found.'
             ], 404);
         }
 
-        // Cek jika artikel memiliki thumbnail dan hapus file thumbnail
         if ($article->thumbnail) {
-            // Menghapus gambar dari storage
             Storage::disk('public')->delete($article->thumbnail);
         }
 
-        // Hapus artikel dari database
         $article->delete();
 
-        // Kembalikan response sukses
         return response()->json([
             'message' => 'Article deleted successfully'
         ], 200);

@@ -15,9 +15,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('business_name');
-            $table->text('location');
             $table->string('owner_name');
             $table->string('description');
+            $table->string('location')->nullable();
+            $table->string('latitude')->nullable();
+            $table->string('longitude')->nullable();
+            $table->text('proof')->nullable();
             $table->string('note')->nullable();
             $table->foreignId('sector_id')->nullable()->constrained()->onDelete('set null');
             $table->boolean('status')->default(true);

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('business_name');
             $table->string('slug')->unique();
             $table->string('owner_name');
-            $table->text('proof_photo')->nullable();
+            $table->text('profile')->nullable();
             $table->text('description')->nullable();
             $table->string('location')->nullable();
             $table->string('latitude')->nullable();
@@ -26,7 +26,9 @@ return new class extends Migration
             $table->string('instagram')->nullable();
             $table->string('facebook')->nullable();
             $table->string('tiktok')->nullable();
-            $table->boolean('status')->default(true);
+            $table->integer('status')->default(1);
+            $table->boolean('active')->nullable()->default(true);
+            $table->string('note')->nullable();
             $table->timestamps();
         });
     }

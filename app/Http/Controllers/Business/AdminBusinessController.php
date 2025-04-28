@@ -59,38 +59,63 @@ class AdminBusinessController extends Controller
         ], 201);
     }
 
-    public function disable($id)
+    public function disable(Request $request, $id)
     {
-        $usaha = Business::find($id);
+        $business = Business::find($id);
 
-        if (!$usaha) {
+        if (!$business) {
             return response()->json([
-                'message' => 'Data usaha tidak ditemukan.'
+                'message' => 'Usaha tidak ditemukan.'
             ], 404);
         }
 
-        $usaha->update(['is_approved' => false]);
+        if ($business->user_id != Auth::id() && Auth::user()->role != 'admin') {
+            return response()->json([
+                'message' => 'Anda tidak memiliki hak untuk menonaktifkan usaha ini.'
+            ], 403);
+        }
+
+        $note = null;
+        if (Auth::user()->role == 'admin') {
+            $validated = $request->validate([
+                'note' => 'nullable|string|max:255',
+            ]);
+            $note = $validated['note'] ?? null;
+        }
+
+        $business->status = 0;
+        $business->note = $note;
+        $business->save();
 
         return response()->json([
-            'message' => 'Data usaha berhasil dinonaktifkan',
-            'data' => $usaha
+            'message' => 'Usaha berhasil dinonaktifkan.',
+            'business' => $business
         ]);
     }
+
+
     public function activate($id)
     {
-        $usaha = Business::find($id);
+        $business = Business::find($id);
 
-        if (!$usaha) {
+        if (!$business) {
             return response()->json([
-                'message' => 'Data usaha tidak ditemukan.'
+                'message' => 'Usaha tidak ditemukan.'
             ], 404);
         }
 
-        $usaha->update(['is_approved' => true]);
+        if ($business->user_id != Auth::id() && Auth::user()->role != 'admin') {
+            return response()->json([
+                'message' => 'Anda tidak memiliki hak untuk mengaktifkan usaha ini.'
+            ], 403);
+        }
+
+        $business->status = 1;
+        $business->save();
 
         return response()->json([
-            'message' => 'Data usaha berhasil dinonaktifkan',
-            'data' => $usaha
+            'message' => 'Usaha berhasil diaktifkan.',
+            'business' => $business
         ]);
     }
 
@@ -100,14 +125,33 @@ class AdminBusinessController extends Controller
 
         if (!$business) {
             return response()->json([
-                'message' => 'Data usaha tidak ditemukan.'
+                'message' => 'Usaha tidak ditemukan.'
             ], 404);
+        }
+
+        if ($business->user_id != Auth::id() && !Auth::user()->is_admin) {
+            return response()->json([
+                'message' => 'Anda tidak memiliki hak untuk menghapus usaha ini.'
+            ], 403);
+        }
+
+        $user = User::find($business->user_id);
+        if ($user) {
+            $user->role = 'visitor_logged';
+            $user->save(); // Simpan perubahan
+        }
+
+        if ($business->profile) {
+            $profilePath = storage_path('app/public/' . $business->profile);
+            if (file_exists($profilePath)) {
+                unlink($profilePath);
+            }
         }
 
         $business->delete();
 
         return response()->json([
-            'message' => 'Usaha berhasil dihapus.'
+            'message' => 'Usaha dan perubahan role user berhasil.'
         ]);
     }
 }

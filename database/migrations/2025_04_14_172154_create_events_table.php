@@ -23,7 +23,8 @@ return new class extends Migration
             $table->string('latitude')->nullable();
             $table->string('longitude')->nullable();
             $table->string('note')->nullable();
-            $table->boolean('is_approved')->default(false);
+            $table->integer('is_approved')->default(0);
+            $table->string('thumbnail')->nullable();
             $table->timestamps();
         });
     }

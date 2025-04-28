@@ -8,56 +8,38 @@ use Illuminate\Routing\Controller;
 
 class BusinessController extends Controller
 {
-    // public function index()
-    // {
-    //     $businesses = Business::with(['user', 'sector'])->get();
-
-    //     return response()->json([
-    //         'status' => true,
-    //         'message' => 'List semua data usaha',
-    //         'data' => $businesses
-    //     ]);
-    // }
-
     public function index(Request $request)
     {
-        $query = Business::query()->where('is_approved', true);
-        // tak tambahi where
+        $query = Business::select('id', 'business_name', 'latitude', 'longitude', 'owner_name', 'profile');
 
-        // Filter berdasarkan sektor_id
-        if ($request->has('sektor')) {
-            $query->where('sector_id', $request->sektor);
+        if ($request->has('sector')) {
+            $query->where('sector_id', $request->sector);
         }
 
-        // Search berdasarkan nama usaha
         if ($request->has('search')) {
             $query->where('business_name', 'like', '%' . $request->search . '%');
         }
 
-        // Paginasi
+        // status
+        $query->where('status', 1)->where('active', true);
+
         $perPage = $request->input('per_page', 10);
+
         $businesses = $query->orderBy('created_at', 'desc')->paginate($perPage);
 
-        return response()->json([
-            'message' => 'Bisnis ditemukan',
-            'data' => $businesses
-        ]);
+        return response()->json($businesses);
     }
+
     public function show($id)
     {
-        $business = Business::where('id', $id)
-            ->where('is_approved', true)
-            ->first();
+        $business = Business::where('status', 1)->where('active', true)->find($id);
 
         if (!$business) {
             return response()->json([
-                'message' => 'Bisnis tidak ditemukan atau belum disetujui'
+                'message' => 'Usaha tidak ditemukan atau tidak aktif.'
             ], 404);
         }
 
-        return response()->json([
-            'message' => 'Bisnis ditemukan',
-            'data' => $business
-        ], 200);
+        return response()->json($business);
     }
 }

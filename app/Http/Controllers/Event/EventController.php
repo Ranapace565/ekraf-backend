@@ -10,15 +10,15 @@ class EventController extends Controller
 {
     public function index(Request $request)
     {
-        $event = Event::where('is_approved', true);
+        $event = Event::where('is_approved', 1);
 
-        // Baru kalau mau search:
         if ($request->has('search')) {
             $event->where('title', 'like', '%' . $request->search . '%');
         }
 
         // Paginasi
         $perPage = $request->input('per_page', 10);
+
         $event = $event->orderBy('created_at', 'desc')->paginate($perPage);
 
         if ($event->isEmpty()) {
@@ -36,7 +36,7 @@ class EventController extends Controller
     {
 
         // $event = Event::where('is_approved', true)->first();
-        $event = Event::where('id', $id)->where('is_approved', true)->first();
+        $event = Event::where('id', $id)->where('is_approved', 1)->first();
 
         if (!$event) {
             return response()->json([

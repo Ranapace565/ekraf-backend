@@ -56,7 +56,7 @@ class AdminEventController extends Controller
         // ]);
 
         $submission->update([
-            'status' => 1,
+            'is_approve' => 1,
             // 'note' => $request->note
         ]);
 

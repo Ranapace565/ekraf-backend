@@ -3,100 +3,156 @@
 namespace App\Http\Controllers\Sector;
 
 use App\Models\Sector;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class SectorController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $query = Sector::query();
+        $sectors = Sector::all();
 
-        // Filter berdasarkan nama sektor
-        // if ($request->has('name')) {
-        //     $query->where('name', $request->name);
-        // }
+        $formattedSectors = $sectors->map(function ($sector) {
+            return [
+                'id' => $sector->id,
+                'name' => $sector->name,
+                'description' => $sector->description,
+                'icon_url' => $sector->icon ? asset('storage/' . $sector->icon) : null,
+                'created_at' => $sector->created_at,
+                'updated_at' => $sector->updated_at,
+            ];
+        });
 
-        // Search berdasarkan nama usaha
-        if ($request->has('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
+        return response()->json([
+            'sectors' => $formattedSectors
+        ]);
+    }
+
+    public function show($id)
+    {
+        $sector = Sector::find($id);
+
+        if (!$sector) {
+            return response()->json([
+                'message' => 'Sector not found.'
+            ], 404);
         }
 
-        // Paginasi
-        $perPage = $request->input('per_page', 10);
-        $businesses = $query->orderBy('created_at', 'desc')->paginate($perPage);
-
-        return response()->json($businesses);
+        return response()->json([
+            'sector' => [
+                'id' => $sector->id,
+                'name' => $sector->name,
+                'description' => $sector->description,
+                'icon_url' => $sector->icon ? asset('storage/' . $sector->icon) : null,
+                'created_at' => $sector->created_at,
+                'updated_at' => $sector->updated_at,
+            ]
+        ]);
     }
+
+
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name'        => 'required|string|unique:sectors,name',
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:sectors,name',
             'description' => 'nullable|string',
-            'icon'        => 'nullable|string',
+            'icon' => 'nullable|image|mimes:jpeg,png,jpg,svg,gif|max:2048',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Validasi gagal',
-                'errors'  => $validator->errors()
-            ], 422);
+        $iconPath = null;
+
+        if ($request->hasFile('icon')) {
+            $nameSlug = Str::slug($request->input('name'));
+            $extension = $request->file('icon')->getClientOriginalExtension();
+            $filename = $nameSlug . '.' . $extension;
+
+            $iconPath = $request->file('icon')->storeAs(
+                'sectors/icons',
+                $filename,
+                'public'
+            );
         }
 
         $sector = Sector::create([
-            'name'        => $request->name,
-            'description' => $request->description,
-            'icon'        => $request->icon,
+            'name' => $validated['name'],
+            'description' => $validated['description'] ?? null,
+            'icon' => $iconPath,
         ]);
 
         return response()->json([
-            'message' => 'Sektor berhasil ditambahkan.',
-            'data'    => $sector
+            'message' => 'Sector created successfully',
+            'sector' => $sector
         ], 201);
     }
     public function update(Request $request, $id)
     {
-        $sector = Sector::findOrFail($id);
+        $sector = Sector::find($id);
 
-        $validator = Validator::make($request->all(), [
-            'name'        => 'required|string|unique:sectors,name,' . $sector->id,
-            'description' => 'nullable|string',
-            'icon'        => 'nullable|string',
-        ]);
-
-        if ($validator->fails()) {
+        if (!$sector) {
             return response()->json([
-                'message' => 'Validasi gagal',
-                'errors'  => $validator->errors()
-            ], 422);
-        }
-
-        $sector->update([
-            'name'        => $request->name,
-            'description' => $request->description,
-            'icon'        => $request->icon,
-        ]);
-
-        return response()->json([
-            'message' => 'Sektor berhasil diperbarui.',
-            'data'    => $sector
-        ]);
-    }
-    public function destroy($id)
-    {
-        $business = Sector::find($id);
-
-        if (!$business) {
-            return response()->json([
-                'message' => 'Data sektor tidak ditemukan.'
+                'message' => 'Sector not found.'
             ], 404);
         }
 
-        $business->delete();
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:sectors,name,' . $sector->id,
+            'description' => 'nullable|string',
+            'icon' => 'nullable|image|mimes:jpeg,png,jpg,svg,gif|max:2048',
+        ]);
+
+        // Cek jika ada upload file baru
+        if ($request->hasFile('icon')) {
+            // Hapus icon lama kalau ada
+            if ($sector->icon && Storage::disk('public')->exists($sector->icon)) {
+                Storage::disk('public')->delete($sector->icon);
+            }
+
+            $nameSlug = Str::slug($request->input('name'));
+            $extension = $request->file('icon')->getClientOriginalExtension();
+            $filename = $nameSlug . '.' . $extension;
+
+            $iconPath = $request->file('icon')->storeAs(
+                'sectors/icons',
+                $filename,
+                'public'
+            );
+
+            $sector->icon = $iconPath;
+        }
+
+        // Update field lainnya
+        $sector->name = $validated['name'];
+        $sector->description = $validated['description'] ?? null;
+        $sector->save();
 
         return response()->json([
-            'message' => 'Sektor berhasil dihapus.'
+            'message' => 'Sector updated successfully',
+            'sector' => $sector
+        ]);
+    }
+
+    public function destroy($id)
+    {
+        $sector = Sector::find($id);
+
+        if (!$sector) {
+            return response()->json([
+                'message' => 'Sector not found.'
+            ], 404);
+        }
+
+        // Hapus icon dari storage kalau ada
+        if ($sector->icon && Storage::disk('public')->exists($sector->icon)) {
+            Storage::disk('public')->delete($sector->icon);
+        }
+
+        $sector->delete();
+
+        return response()->json([
+            'message' => 'Sector deleted successfully.'
         ]);
     }
 }
