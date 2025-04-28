@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Article\AdminArticleController;
+use App\Http\Controllers\Comment\CommentController;
 use App\Http\Controllers\Event\AdminEventController;
 use App\Http\Controllers\Galery\EntrepreneurBusinessGaleyController;
 use Illuminate\Http\Request;
@@ -16,6 +17,7 @@ use App\Http\Controllers\Business\AdminBusinessSubmissionController;
 use App\Http\Controllers\BusinessGalleryController;
 use App\Http\Controllers\Event\EnterpreneurEventController;
 use App\Http\Controllers\Event\EventController;
+use App\Http\Controllers\Service\AdminServicesController;
 use App\Http\Controllers\SosialMedia\EntrepreneurSosialMediaController;
 use App\Http\Controllers\SosialMedia\SosialMediaController;
 
@@ -39,6 +41,8 @@ Route::get('/sectors', [SectorController::class, 'index']);
 Route::get('/sectors/{id}', [SectorController::class, 'show']);
 Route::get('/sosial-medias/{id}', [SosialMediaController::class, 'index']);
 Route::get('/galery/{id}', [EntrepreneurBusinessGaleyController::class, 'index']);
+Route::get('/service', [AdminServicesController::class, 'index']);
+Route::get('/comment/{id}', [CommentController::class, 'index']);
 
 Route::middleware(['web'])->group(function () {
     Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect']);
@@ -51,6 +55,11 @@ Route::middleware(['auth:sanctum', 'role:visitor_logged'])->group(function () {
     Route::post('/visitor/business-submission', [BusinessSubmissionController::class, 'store']);
     Route::put('/visitor/business-submission/{id}', [BusinessSubmissionController::class, 'update']);
     Route::delete('/visitor/business-submission/{id}', [AdminBusinessSubmissionController::class, 'destroy']);
+
+    Route::get('/visitor/comment/{id}', [CommentController::class, 'show']);
+    Route::post('/visitor/comment', [CommentController::class, 'store']);
+    Route::put('/visitor/comment/{id}', [CommentController::class, 'update']);
+    Route::delete('/visitor/comment/{id}', [CommentController::class, 'destroy']);
 });
 
 Route::middleware(['auth:sanctum', 'role:entrepreneur'])->group(function () {
@@ -74,6 +83,11 @@ Route::middleware(['auth:sanctum', 'role:entrepreneur'])->group(function () {
     Route::post('/entrepreneur/galery', [EntrepreneurBusinessGaleyController::class, 'store']);
     Route::put('/entrepreneur/galery/{id}', [EntrepreneurBusinessGaleyController::class, 'store']);
     Route::delete('/entrepreneur/galery/{id}', [EntrepreneurBusinessGaleyController::class, 'delete']);
+
+    Route::get('/entrepreneur/comment/{id}', [CommentController::class, 'show']);
+    Route::post('/entrepreneur/comment', [CommentController::class, 'store']);
+    Route::put('/entrepreneur/comment/{id}', [CommentController::class, 'update']);
+    Route::delete('/entrepreneur/comment/{id}', [CommentController::class, 'destroy']);
 });
 
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
@@ -102,4 +116,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::post('/admin/article', [AdminArticleController::class, 'store']);
     Route::put('/admin/article/{id}', [AdminArticleController::class, 'update']);
     Route::delete('/admin/article/{id}', [AdminArticleController::class, 'destroy']);
+
+    Route::Post('/admin/service', [AdminServicesController::class, 'store']);
+    Route::put('/admin/service', [AdminServicesController::class, 'update']);
 });

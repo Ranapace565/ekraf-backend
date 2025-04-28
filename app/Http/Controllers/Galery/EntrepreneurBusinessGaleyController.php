@@ -54,12 +54,12 @@ class EntrepreneurBusinessGaleyController extends Controller
             // Cek apakah sudah ada file dengan nama yang sama, jika iya, tambahkan angka unik
             $counter = 1;
             $baseFilename = $captionSlug;
-            while (Storage::disk('public')->exists('galleries/' . $filename)) {
+            while (Storage::disk('public')->exists('businesses/galleries/' . $filename)) {
                 $filename = $baseFilename . '-' . $counter . '.' . $extension;
                 $counter++;
             }
 
-            $photoPath = $request->file('photo')->storeAs('galleries', $filename, 'public');
+            $photoPath = $request->file('photo')->storeAs('businesses/galleries', $filename, 'public');
         } else {
             return response()->json([
                 'message' => 'Foto wajib diunggah.'
@@ -117,12 +117,12 @@ class EntrepreneurBusinessGaleyController extends Controller
 
             $counter = 1;
             $baseFilename = $captionSlug;
-            while (Storage::disk('public')->exists('galleries/' . $filename)) {
+            while (Storage::disk('public')->exists('businesses/galleries/' . $filename)) {
                 $filename = $baseFilename . '-' . $counter . '.' . $extension;
                 $counter++;
             }
 
-            $photoPath = $request->file('photo')->storeAs('galleries', $filename, 'public');
+            $photoPath = $request->file('photo')->storeAs('businesses/galleries', $filename, 'public');
             $gallery->photo = $photoPath;
         }
 

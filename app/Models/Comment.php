@@ -10,7 +10,7 @@ class Comment extends Model
     /** @use HasFactory<\Database\Factories\CommentFactory> */
     use HasFactory;
 
-    protected $fillable = ['user_id', 'business_id', 'comment'];
+    protected $fillable = [];
 
     public function user()
     {
