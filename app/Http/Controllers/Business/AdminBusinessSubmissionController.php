@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Business;
 
+use App\Mail\SubmissionApproved;
 use App\Models\User;
 use App\Models\Sector;
 use App\Models\Business;
@@ -10,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Models\BusinessSubmission;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class AdminBusinessSubmissionController extends Controller
 {
@@ -67,6 +69,9 @@ class AdminBusinessSubmissionController extends Controller
         if ($user) {
             $user->role = 'entrepreneur';
             $user->save();
+
+            // Kirim email notifikasi
+            Mail::to($user->email)->send(new SubmissionApproved($user, $submission->business_name));
         }
 
         $submission->delete();

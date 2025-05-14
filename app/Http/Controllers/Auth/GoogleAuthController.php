@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
 
 class GoogleAuthController extends Controller
@@ -33,6 +34,15 @@ class GoogleAuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'user' => $user,
+        ]);
+    }
+    public function logout(Request $request)
+    {
+        // Hapus token yang sedang digunakan
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'message' => 'Logged out successfully'
         ]);
     }
 }

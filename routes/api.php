@@ -45,8 +45,10 @@ Route::get('/galery/{id}', [EntrepreneurBusinessGaleyController::class, 'index']
 Route::get('/service', [AdminServicesController::class, 'index']);
 Route::get('/comment/{id}', [CommentController::class, 'index']);
 Route::get('/sosial-media', [SosialMediaController::class, 'index']);
-Route::get('/business-product/{id}', [ProductController::class, 'index']);
+Route::get('/business-products/{id}', [ProductController::class, 'index']);
 Route::get('/product/{id}', [ProductController::class, 'show']);
+// Route::middleware('auth:sanctum')->
+// Route::post('/logout', [GoogleAuthController::class, 'logout']);
 
 Route::middleware(['web'])->group(function () {
     Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect']);
@@ -134,4 +136,6 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::post('/admin/sosial-media/{id}', [SosialMediaController::class, 'store']);
     Route::put('/admin/sosial-media/{id}', [SosialMediaController::class, 'update']);
     Route::delete('/admin/sosial-media/{id}', [SosialMediaController::class, 'destroy']);
+
+    Route::post('/logout', [GoogleAuthController::class, 'logout']);
 });
