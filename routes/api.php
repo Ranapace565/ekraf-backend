@@ -1,27 +1,28 @@
 <?php
 
-use App\Http\Controllers\Article\AdminArticleController;
-use App\Http\Controllers\Comment\CommentController;
-use App\Http\Controllers\Event\AdminEventController;
-use App\Http\Controllers\Galery\EntrepreneurBusinessGaleyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\chat\ChatController;
+use App\Http\Controllers\Event\EventController;
 use App\Http\Controllers\Sector\SectorController;
 use App\Http\Controllers\Auth\GoogleAuthController;
+
+use App\Http\Controllers\BusinessGalleryController;
+use App\Http\Controllers\Comment\CommentController;
+use App\Http\Controllers\Product\ProductController;
+use App\Http\Controllers\Event\AdminEventController;
 use App\Http\Controllers\Business\BusinessController;
+use App\Http\Controllers\Article\AdminArticleController;
+use App\Http\Controllers\Service\AdminServicesController;
 use App\Http\Controllers\Business\AdminBusinessController;
+use App\Http\Controllers\Event\EnterpreneurEventController;
+use App\Http\Controllers\SosialMedia\SosialMediaController;
 use App\Http\Controllers\Business\BusinessSubmissionController;
+use App\Http\Controllers\Product\EntrepreneurProductController;
 use App\Http\Controllers\Business\EntrepreneurBusinessController;
 use App\Http\Controllers\Business\AdminBusinessSubmissionController;
-use App\Http\Controllers\BusinessGalleryController;
-use App\Http\Controllers\Event\EnterpreneurEventController;
-use App\Http\Controllers\Event\EventController;
-use App\Http\Controllers\Product\EntrepreneurProductController;
-use App\Http\Controllers\Product\ProductController;
-use App\Http\Controllers\Service\AdminServicesController;
+use App\Http\Controllers\Galery\EntrepreneurBusinessGaleyController;
 use App\Http\Controllers\SosialMedia\EntrepreneurSosialMediaController;
-use App\Http\Controllers\SosialMedia\SosialMediaController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -66,6 +67,10 @@ Route::middleware(['auth:sanctum', 'role:visitor_logged'])->group(function () {
     Route::post('/visitor/comment', [CommentController::class, 'store']);
     Route::put('/visitor/comment/{id}', [CommentController::class, 'update']);
     Route::delete('/visitor/comment/{id}', [CommentController::class, 'destroy']);
+
+    Route::get('/visitor/chats/{recipient_id}', [ChatController::class, 'index']);
+    Route::post('/visitor/chats', [ChatController::class, 'store']);
+    Route::delete('/visitor/chats/{id}', [ChatController::class, 'destroy']);
 });
 
 Route::middleware(['auth:sanctum', 'role:entrepreneur'])->group(function () {
@@ -100,6 +105,10 @@ Route::middleware(['auth:sanctum', 'role:entrepreneur'])->group(function () {
     Route::post('/entrepreneur/product/', [EntrepreneurProductController::class, 'store']);
     Route::put('/entrepreneur/product/{id}', [EntrepreneurProductController::class, 'update']);
     Route::delete('/entrepreneur/product/{id}', [EntrepreneurProductController::class, 'destroy']);
+
+    Route::get('/entrepreneur/chats/{recipient_id}', [ChatController::class, 'index']);
+    Route::post('/entrepreneur/chats', [ChatController::class, 'store']);
+    Route::delete('/entrepreneur/chats/{id}', [ChatController::class, 'destroy']);
 });
 
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
