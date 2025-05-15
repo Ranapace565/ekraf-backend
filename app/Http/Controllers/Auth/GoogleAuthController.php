@@ -31,19 +31,19 @@ class GoogleAuthController extends Controller
 
         $token = $user->createToken('api-token')->plainTextToken;
 
-        dd('asfsaf');
-        return response()->json([
-            'access_token' => $token,
-            'user' => $user,
-        ]);
-
-        // update
-        // $redirectUrl = config('services.frontend_url') . '/login/callback?' . http_build_query([
+        // dd('asfsaf');
+        // return response()->json([
         //     'access_token' => $token,
-        //     'user' => json_encode($user),
+        //     'user' => $user,
         // ]);
 
-        // return redirect($redirectUrl);
+        // update
+        $redirectUrl = config('services.frontend_url') . '/login/callback?' . http_build_query([
+            'access_token' => $token,
+            'user' => json_encode($user),
+        ]);
+
+        return redirect($redirectUrl);
     }
     public function logout(Request $request)
     {
