@@ -12,6 +12,7 @@ use App\Http\Controllers\Comment\CommentController;
 use App\Http\Controllers\Product\ProductController;
 use App\Http\Controllers\Event\AdminEventController;
 use App\Http\Controllers\Business\BusinessController;
+use App\Http\Controllers\Auth\WebGoogleAuthController;
 use App\Http\Controllers\Article\AdminArticleController;
 use App\Http\Controllers\Service\AdminServicesController;
 use App\Http\Controllers\Business\AdminBusinessController;
@@ -30,6 +31,11 @@ Route::get('/', function () {
 
 Route::get('/auth/redirect/google', [GoogleAuthController::class, 'redirect']);
 Route::get('/auth/callback/google', [GoogleAuthController::class, 'callback']);
+
+Route::get('/web/auth/redirect/google', [WebGoogleAuthController::class, 'redirect']);
+Route::get('/web/auth/callback/google', [WebGoogleAuthController::class, 'callback']);
+
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
@@ -51,10 +57,10 @@ Route::get('/product/{id}', [ProductController::class, 'show']);
 // Route::middleware('auth:sanctum')->
 // Route::post('/logout', [GoogleAuthController::class, 'logout']);
 
-Route::middleware(['web'])->group(function () {
-    Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect']);
-    Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback']);
-});
+// Route::middleware(['web'])->group(function () {
+//     Route::get('/auth/google/redirect', [WebGoogleAuthController::class, 'redirect']);
+//     Route::get('/auth/google/callback', [WebGoogleAuthController::class, 'callback']);
+// });
 
 Route::middleware(['auth:sanctum', 'role:visitor_logged'])->group(function () {
     Route::get('/visitor/business-submission', [BusinessSubmissionController::class, 'index']);

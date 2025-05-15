@@ -2,6 +2,8 @@
 
 return [
 
+    'frontend_url' => env('FRONTEND_URL', 'http://dispora.test:8080'),
+
     /*
     |--------------------------------------------------------------------------
     | Third Party Services
@@ -13,6 +15,8 @@ return [
     | a conventional file to locate the various service credentials.
     |
     */
+
+    // 'backend_api' => env('BACKEND_API_URL', 'http://localhost:8000/api'),
 
     'postmark' => [
         'token' => env('POSTMARK_TOKEN'),
@@ -40,4 +44,10 @@ return [
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
         'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
+
+    // 'google_web' => [
+    //     'client_id' => env('WEB_GOOGLE_CLIENT_ID'),
+    //     'client_secret' => env('WEB_GOOGLE_CLIENT_SECRET'),
+    //     'redirect' => env('WEB_GOOGLE_REDIRECT_URI'),
+    // ],
 ];
