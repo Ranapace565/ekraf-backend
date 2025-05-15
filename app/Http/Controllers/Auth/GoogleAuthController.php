@@ -32,19 +32,49 @@ class GoogleAuthController extends Controller
         $token = $user->createToken('api-token')->plainTextToken;
 
         // dd('asfsaf');
-        // return response()->json([
-        //     'access_token' => $token,
-        //     'user' => $user,
-        // ]);
-
-        // update
-        $redirectUrl = config('services.frontend_url') . '/login/callback?' . http_build_query([
+        return response()->json([
             'access_token' => $token,
-            'user' => json_encode($user),
+            'user' => $user,
         ]);
 
-        return redirect($redirectUrl);
+        // update
+        // $redirectUrl = config('services.frontend_url') . '/login/callback?' . http_build_query([
+        //     'access_token' => $token,
+        //     'user' => json_encode($user),
+        // ]);
+
+        // return redirect($redirectUrl);
     }
+
+    public function mobileCallback(Request $request)
+    {
+
+        try {
+            $googleUser = Socialite::driver('google')->stateless()->user();
+
+            $user = User::firstOrCreate(
+                ['email' => $googleUser->getEmail()],
+                [
+                    'name' => $googleUser->getName(),
+                    'password' => bcrypt(Str::random(24)),
+                    'role' => 'visitor_logged',
+                ]
+            );
+
+            $token = $user->createToken('api-token')->plainTextToken;
+
+            return response()->json([
+                'access_token' => $token,
+                'user' => $user,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Login gagal',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
     public function logout(Request $request)
     {
         // Hapus token yang sedang digunakan

@@ -30,7 +30,7 @@ Route::get('/', function () {
 });
 
 Route::get('/auth/redirect/google', [GoogleAuthController::class, 'redirect']);
-Route::get('/auth/callback/google', [GoogleAuthController::class, 'callback']);
+Route::get('/auth/callback/google', [GoogleAuthController::class, 'mobileCallback']);
 
 Route::get('/web/auth/redirect/google', [WebGoogleAuthController::class, 'redirect']);
 Route::get('/web/auth/callback/google', [WebGoogleAuthController::class, 'callback']);
