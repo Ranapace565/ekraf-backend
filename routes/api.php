@@ -29,6 +29,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::post('/auth/google/mobile', [GoogleAuthController::class, 'handleMobileLogin']);
+
 Route::get('/auth/redirect/google', [GoogleAuthController::class, 'redirect']);
 Route::get('/auth/callback/google', [GoogleAuthController::class, 'mobileCallback']);
 
@@ -54,6 +56,8 @@ Route::get('/comment/{id}', [CommentController::class, 'index']);
 Route::get('/sosial-media', [SosialMediaController::class, 'index']);
 Route::get('/business-products/{id}', [ProductController::class, 'index']);
 Route::get('/product/{id}', [ProductController::class, 'show']);
+
+
 // Route::middleware('auth:sanctum')->
 // Route::post('/logout', [GoogleAuthController::class, 'logout']);
 
