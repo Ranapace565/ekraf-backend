@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\emails\CallUserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
@@ -32,3 +33,8 @@ Route::get('/test-email', function () {
 
     return 'Email terkirim!';
 });
+
+Route::get('/visitor/submission/reject', [CallUserController::class, 'CallVisitor'])->name('SubmissionReject');
+Route::get('/visitor/submission/approvement', [CallUserController::class, 'CallEntrepreneur'])->name('SubmissionApprove');
+Route::get('/entrepreneur/business/disable', [CallUserController::class, 'CallEntrepreneur'])->name('BusinessDisable');
+Route::get('/entrepreneur/event', [CallUserController::class, 'Event'])->name('Event');

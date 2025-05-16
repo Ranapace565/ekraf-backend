@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Business;
 
+use App\Mail\BusinessDisable;
 use App\Models\User;
 use App\Models\Sector;
 use App\Models\Business;
@@ -9,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Models\BusinessSubmission;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class AdminBusinessController extends Controller
 {
@@ -83,9 +85,14 @@ class AdminBusinessController extends Controller
             $note = $validated['note'] ?? null;
         }
 
+
+
         $business->status = 0;
         $business->note = $note;
         $business->save();
+
+        $user = User::find($business->user_id);
+        Mail::to($user->email)->send(new BusinessDisable($user, $validated['note']));
 
         return response()->json([
             'message' => 'Usaha berhasil dinonaktifkan.',

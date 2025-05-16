@@ -30,10 +30,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::post('/auth/google/mobile', [GoogleAuthController::class, 'handleMobileLogin']);
 
 Route::get('/auth/redirect/google', [GoogleAuthController::class, 'redirect']);
 Route::get('/auth/callback/google', [GoogleAuthController::class, 'mobileCallback']);
+Route::post('/auth/google/mobile', [GoogleAuthController::class, 'handleMobileLogin']);
 
 Route::get('/web/auth/redirect/google', [WebGoogleAuthController::class, 'redirect']);
 Route::get('/web/auth/callback/google', [WebGoogleAuthController::class, 'callback']);
