@@ -83,6 +83,13 @@ class BusinessSubmissionController extends Controller
 
     public function store(Request $request)
     {
+        $existing = BusinessSubmission::where('user_id', Auth::id())->first();
+        if ($existing) {
+            return response()->json([
+                'message' => 'Kamu sudah mengajukan usaha. Setiap pengguna hanya boleh mengajukan satu usaha.'
+            ], 400);
+        }
+
         $validated = $request->validate([
             'business_name' => 'required|string|max:255',
             'owner_name' => 'required|string|max:255',

@@ -14,7 +14,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('/auth/redirect/google', [GoogleAuthController::class, 'redirect']);
-Route::get('/auth/callback/google', [GoogleAuthController::class, 'mobileCallback']);
+Route::get('/auth/callback/google', [GoogleAuthController::class, 'callback']);
 
 Route::get('/', function () {
     return view('testlogin');

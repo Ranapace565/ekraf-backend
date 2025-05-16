@@ -1,12 +1,13 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\chat\ChatController;
 use App\Http\Controllers\Event\EventController;
 use App\Http\Controllers\Sector\SectorController;
-use App\Http\Controllers\Auth\GoogleAuthController;
 
+use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\BusinessGalleryController;
 use App\Http\Controllers\Comment\CommentController;
 use App\Http\Controllers\Product\ProductController;
@@ -157,4 +158,13 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::delete('/admin/sosial-media/{id}', [SosialMediaController::class, 'destroy']);
 
     Route::post('/logout', [GoogleAuthController::class, 'logout']);
+});
+
+Route::get('/test-email', function () {
+    Mail::raw('Tes pengiriman email dari Laravel', function ($message) {
+        $message->to('ranabagaskara565@gmail.com')
+            ->subject('Tes Email');
+    });
+
+    return 'Email terkirim!';
 });

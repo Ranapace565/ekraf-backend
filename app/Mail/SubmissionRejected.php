@@ -9,22 +9,22 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class SubmissionApproved extends Mailable
+class SubmissionRejected extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $user;
-    public $businessName;
+    public $note;
 
-    public function __construct($user, $businessName)
+    public function __construct($user, $note)
     {
         $this->user = $user;
-        $this->businessName = $businessName;
+        $this->note = $note;
     }
 
     public function build()
     {
-        return $this->subject('Pengajuan Usaha Anda Telah Disetujui')
-            ->view('emails.submission_approved');
+        return $this->subject('Pengajuan Usaha Anda Ditolak')
+            ->view('emails.submission_rejected');
     }
 }

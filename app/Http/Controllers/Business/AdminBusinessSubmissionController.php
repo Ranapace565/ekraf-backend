@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Business;
 
-use App\Mail\SubmissionApproved;
 use App\Models\User;
 use App\Models\Sector;
 use App\Models\Business;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Mail\SubmissionApproved;
+use App\Mail\SubmissionRejected;
 use App\Models\BusinessSubmission;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -82,7 +83,7 @@ class AdminBusinessSubmissionController extends Controller
     // tambah note
     public function reject(Request $request, $id)
     {
-        $submission = BusinessSubmission::findOrFail($id);
+        $submission = BusinessSubmission::find($id);
 
         if (!$submission) {
             // Jika pengajuan tidak ditemukan
@@ -91,14 +92,21 @@ class AdminBusinessSubmissionController extends Controller
             ], 404);
         }
 
-        $request->validate([
+        $validated = $request->validate([
             'note' => 'required|string|max:255'
         ]);
 
+        // dd('semlekom');
+
         $submission->update([
-            'status' => false,
-            'note' => $request['note'],
+            'status' => 0,
+            'note' => $validated['note'],
         ]);
+
+        $user = User::find($submission->user_id);
+        if ($user) {
+            Mail::to($user->email)->send(new SubmissionRejected($user, $submission->note));
+        }
 
         return response()->json([
             'message' => 'Pengajuan ditolak berhasil dikirim.',

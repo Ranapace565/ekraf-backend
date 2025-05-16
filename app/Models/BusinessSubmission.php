@@ -16,7 +16,9 @@ class BusinessSubmission extends Model
         'location',
         'owner_name',
         'description',
-        'sector_id'
+        'sector_id',
+        'note',
+        'status',
     ];
 
     public function user()
