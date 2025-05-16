@@ -27,16 +27,16 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('admin123'),
         ]);
 
-        // Buat 10 masyarakat dan pelaku
-        User::factory(5)->create(['role' => 'masyarakat']);
-        User::factory(5)->create(['role' => 'pelaku']);
+        // Buat 10 visitor_logged dan entrepreneur
+        User::factory(5)->create(['role' => 'visitor_logged']);
+        User::factory(5)->create(['role' => 'entrepreneur']);
 
         // Buat sektor
         Sector::factory(17)->create();
 
-        // Buat bisnis yang di-assign ke pelaku usaha
-        $pelakuUsers = User::where('role', 'pelaku')->get();
-        // foreach ($pelakuUsers as $user) {
+        // Buat bisnis yang di-assign ke entrepreneur usaha
+        $entrepreneurUsers = User::where('role', 'entrepreneur')->get();
+        // foreach ($entrepreneurUsers as $user) {
         //     $business = Business::factory()->create(['user_id' => $user->id]);
         //     BusinessGallery::factory(3)->create(['business_id' => $business->id]);
         //     Event::factory(2)->create([
@@ -45,7 +45,7 @@ class DatabaseSeeder extends Seeder
         //     ]);
         // }
 
-        foreach ($pelakuUsers as $user) {
+        foreach ($entrepreneurUsers as $user) {
             $business = Business::factory()->create(['user_id' => $user->id]);
 
             // Galeri & Event tetap
@@ -57,10 +57,10 @@ class DatabaseSeeder extends Seeder
         }
 
 
-        // Komentar oleh masyarakat ke beberapa bisnis
-        $masyarakatUsers = User::where('role', 'masyarakat')->get();
+        // Komentar oleh visitor_logged ke beberapa bisnis
+        $visitor_loggedUsers = User::where('role', 'visitor_logged')->get();
         $businesses = Business::all();
-        foreach ($masyarakatUsers as $user) {
+        foreach ($visitor_loggedUsers as $user) {
             foreach ($businesses->random(3) as $business) {
                 Comment::factory()->create([
                     'user_id' => $user->id,
