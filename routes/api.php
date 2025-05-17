@@ -79,7 +79,7 @@ Route::middleware(['auth:sanctum', 'role:visitor_logged'])->group(function () {
     Route::put('/visitor/comment/{id}', [CommentController::class, 'update']);
     Route::delete('/visitor/comment/{id}', [CommentController::class, 'destroy']);
 
-    Route::get('/visitor/treads', [ChatController::class, 'index']);
+    Route::get('/visitor/threads', [ChatController::class, 'index']);
     Route::get('/visitor/chats/{id}', [ChatController::class, 'show']);
     Route::post('/visitor/chats', [ChatController::class, 'store']);
     Route::delete('/visitor/chats/{id}', [ChatController::class, 'destroy']);
@@ -118,7 +118,7 @@ Route::middleware(['auth:sanctum', 'role:entrepreneur'])->group(function () {
     Route::put('/entrepreneur/product/{id}', [EntrepreneurProductController::class, 'update']);
     Route::delete('/entrepreneur/product/{id}', [EntrepreneurProductController::class, 'destroy']);
 
-    Route::get('/entrepreneur/chats/{recipient_id}', [ChatController::class, 'index']);
+    Route::get('/entrepreneur/threads', [ChatController::class, 'index']);
     Route::get('/entrepreneur/chats/{id}', [ChatController::class, 'show']);
     Route::post('/entrepreneur/chats', [ChatController::class, 'store']);
     Route::delete('/entrepreneur/chats/{id}', [ChatController::class, 'destroy']);

@@ -24,6 +24,7 @@ class ChatController extends Controller
             ->latest('updated_at')
             ->get();
 
+
         if ($threads->isEmpty()) {
             return response()->json(['message' => 'Anda belum memulai percakapan'], 200);
         }
