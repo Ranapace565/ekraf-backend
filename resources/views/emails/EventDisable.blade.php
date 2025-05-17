@@ -11,7 +11,7 @@
     <p>Mohon maaf, event Anda yang berjudul <b>{{ $title }}</b> <strong>dinonaktifkan</strong>.</p>
     <p>Catatan dari admin: <em>{{ $note }}</em></p>
     <p>Silakan login ke website EKRAF NGANJUK untuk memperbarui atau mengajukan ulang.</p>
-    <a href="{{ route('SubmissionReject') }}"
+    <a href="{{ route('Event') }}"
         style="display:inline-block; padding:10px 15px; background-color:#e74c3c; color:#fff; text-decoration:none; border-radius:5px;">
         Ajukan Eventmu Lagi
     </a>
